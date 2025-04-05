@@ -2,7 +2,7 @@
   "name": "git-open",
   "displayName": "Git Open",
   "description": "helps you quickly open the remote repository of the current project",
-  "version": "0.0.1",
+  "version": "2025.4.0",
   "engines": {
     "vscode": "^1.96.0"
   },
