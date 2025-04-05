@@ -2,8 +2,8 @@
   "name": "git-open",
   "displayName": "Git Open",
   "description": "helps you quickly open the remote repository of the current project",
-  "version": "2025.4.0",
-  "publisher": "logan",
+  "version": "2025.4.1",
+  "publisher": "loganguo",
   "author": {
     "name": "Logan"
   },
@@ -107,7 +107,7 @@
     "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "@types/vscode": "^1.99.0",
+    "@types/vscode": "^1.96.0",
     "@typescript-eslint/eslint-plugin": "^8.28.0",
     "@typescript-eslint/parser": "^8.28.0",
     "@vscode/test-cli": "^0.0.10",
