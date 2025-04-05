@@ -29,6 +29,34 @@
         "command": "git-open.openPipelines",
         "title": "Git Open: Open Pipelines/Actions"
       }
+    ],
+    "keybindings": [
+      {
+        "command": "workbench.action.quickOpen",
+        "args": ">Git Open",
+        "key": "alt+g alt+g",
+        "mac": "alt+g alt+g"
+      },
+      {
+        "command": "git-open.openRemoteRepo",
+        "key": "alt+g alt+o",
+        "mac": "alt+g alt+o"
+      },
+      {
+        "command": "git-open.openMergeRequests",
+        "key": "alt+g alt+m",
+        "mac": "alt+g alt+m"
+      },
+      {
+        "command": "git-open.createMergeRequest",
+        "key": "alt+g alt+r",
+        "mac": "alt+g alt+r"
+      },
+      {
+        "command": "git-open.openPipelines",
+        "key": "alt+g alt+p",
+        "mac": "alt+g alt+p"
+      }
     ]
   },
   "scripts": {
