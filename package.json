@@ -16,6 +16,18 @@
       {
         "command": "git-open.openRemoteRepo",
         "title": "Git Open: Open Remote Repository"
+      },
+      {
+        "command": "git-open.openMergeRequests",
+        "title": "Git Open: Open Merge Requests/Pull Requests"
+      },
+      {
+        "command": "git-open.createMergeRequest",
+        "title": "Git Open: Create Merge Request/Pull Request"
+      },
+      {
+        "command": "git-open.openPipelines",
+        "title": "Git Open: Open Pipelines/Actions"
       }
     ]
   },

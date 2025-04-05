@@ -10,6 +10,13 @@ export class GitError extends Error {
     }
 }
 
+export interface GitRemoteInfo {
+    provider: 'github' | 'gitlab' | 'bitbucket' | 'azure' | 'unknown';
+    owner: string;
+    repo: string;
+    baseUrl: string;
+}
+
 export class GitHelper {
     /**
      * Check if the given path is a Git repository
@@ -77,6 +84,78 @@ export class GitHelper {
                 `Failed to get remote repository URL: ${error instanceof Error ? error.message : 'Unknown error'}`,
                 'git config'
             );
+        }
+    }
+
+    /**
+     * Get information about the Git remote repository
+     * @param path - The filesystem path of the Git repository
+     * @returns Promise<GitRemoteInfo> - Information about the remote repository
+     */
+    static async getRemoteInfo(path: string): Promise<GitRemoteInfo> {
+        const remoteUrl = await this.getRemoteUrl(path);
+        const url = new URL(remoteUrl);
+        const parts = url.pathname.split('/').filter(Boolean);
+
+        if (parts.length < 2) {
+            throw new GitError('Invalid remote URL format');
+        }
+
+        const info: GitRemoteInfo = {
+            provider: 'unknown',
+            owner: parts[0],
+            repo: parts[1],
+            baseUrl: `${url.protocol}//${url.host}`
+        };
+
+        // Determine the provider
+        if (url.host === 'github.com') {
+            info.provider = 'github';
+        } else if (url.host === 'gitlab.com' || url.host.includes('gitlab')) {
+            info.provider = 'gitlab';
+        } else if (url.host.includes('bitbucket')) {
+            info.provider = 'bitbucket';
+        } else if (url.host.includes('azure') || url.host.includes('visualstudio')) {
+            info.provider = 'azure';
+        }
+
+        return info;
+    }
+
+    /**
+     * Get the current branch name
+     * @param path - The filesystem path of the Git repository
+     * @returns Promise<string> - The current branch name
+     */
+    static async getCurrentBranch(path: string): Promise<string> {
+        try {
+            const { stdout } = await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: path });
+            return stdout.trim();
+        } catch (error) {
+            throw new GitError(
+                `Failed to get current branch: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                'git rev-parse'
+            );
+        }
+    }
+
+    /**
+     * Get the default remote branch name (usually main or master)
+     * @param path - The filesystem path of the Git repository
+     * @returns Promise<string> - The default branch name
+     */
+    static async getDefaultBranch(path: string): Promise<string> {
+        try {
+            const { stdout } = await execAsync('git remote show origin | grep "HEAD branch" | cut -d: -f2', { cwd: path });
+            return stdout.trim();
+        } catch (error) {
+            // Fallback to main or master
+            try {
+                const { stdout } = await execAsync('git branch -r | grep -E "origin/(main|master)" | head -1 | sed "s/.* origin\\///"', { cwd: path });
+                return stdout.trim() || 'main';
+            } catch {
+                return 'main'; // Default fallback
+            }
         }
     }
 } 

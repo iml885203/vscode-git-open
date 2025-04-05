@@ -3,6 +3,9 @@
 import * as vscode from 'vscode';
 import { GitHelper } from './gitHelper';
 import { OpenRemoteRepoCommand } from './commands/openRemoteRepoCommand';
+import { OpenMergeRequestsCommand } from './commands/openMergeRequestsCommand';
+import { CreateMergeRequestCommand } from './commands/createMergeRequestCommand';
+import { OpenPipelinesCommand } from './commands/openPipelinesCommand';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -14,6 +17,9 @@ export function activate(context: vscode.ExtensionContext) {
 
 	// Register commands
 	OpenRemoteRepoCommand.register(context);
+	OpenMergeRequestsCommand.register(context);
+	CreateMergeRequestCommand.register(context);
+	OpenPipelinesCommand.register(context);
 }
 
 // This method is called when your extension is deactivated
