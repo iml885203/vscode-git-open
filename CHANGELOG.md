@@ -1,8 +1,10 @@
 # Change Log
 
-All notable changes to the "git-open" extension will be documented in this file.
+## [2025.4.1] - 2024-04-05
 
-Check [Keep a Changelog](http://keepachangelog.com/) for recommendations on how to structure this file.
+### Changed
+- Updated extension page style
+
 
 ## [2025.4.1] - 2024-04-05
 
