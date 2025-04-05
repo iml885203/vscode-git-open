@@ -1,53 +1,58 @@
-# git-open README
+# Git Open - VS Code Extension
 
-This is the README for your extension "git-open". After writing up a brief description, we recommend including the following sections.
+Quickly open Git repository pages in your browser. Support for GitHub, GitLab, Bitbucket, and Azure DevOps.
 
 ## Features
 
-Describe specific features of your extension including screenshots of your extension in action. Image paths are relative to this README file.
+- **Open Repository**: Quickly open the current Git repository in your browser
+- **Merge Requests/Pull Requests**: View and create merge requests/pull requests
+- **CI/CD**: Access your pipelines and actions directly
+- **Multiple Git Providers**: Support for GitHub, GitLab, Bitbucket, and Azure DevOps
+- **Keyboard Shortcuts**: Quick access to all features
 
-For example if there is an image subfolder under your extension project workspace:
+## Keyboard Shortcuts
 
-\!\[feature X\]\(images/feature-x.png\)
-
-> Tip: Many popular extensions utilize animations. This is an excellent way to show off your extension! We recommend short, focused animations that are easy to follow.
+| Command | Shortcut | Description |
+|---------|----------|-------------|
+| Open Repository | `Alt+G Alt+O` | Open current repository in browser |
+| Open Merge Requests | `Alt+G Alt+M` | View merge requests/pull requests |
+| Create Merge Request | `Alt+G Alt+R` | Create a new merge request |
+| Open Pipelines | `Alt+G Alt+P` | View CI/CD pipelines |
+| Quick Access | `Alt+G Alt+G` | Show all Git Open commands |
 
 ## Requirements
 
-If you have any requirements or dependencies, add a section describing those and how to install and configure them.
+- Git installed and available in PATH
+- Active Git repository with remote configured
 
 ## Extension Settings
 
-Include if your extension adds any VS Code settings through the `contributes.configuration` extension point.
+This extension contributes the following commands:
 
-For example:
-
-This extension contributes the following settings:
-
-* `myExtension.enable`: Enable/disable this extension.
-* `myExtension.thing`: Set to `blah` to do something.
+* `git-open.openRemoteRepo`: Open Remote Repository
+* `git-open.openMergeRequests`: Open Merge Requests/Pull Requests
+* `git-open.createMergeRequest`: Create Merge Request/Pull Request
+* `git-open.openPipelines`: Open Pipelines/Actions
 
 ## Known Issues
 
-Calling out known issues can help limit users opening duplicate issues against your extension.
+Please report issues on our [GitHub repository](https://github.com/logan/vscode-git-open/issues).
 
 ## Release Notes
 
-Users appreciate release notes as you update your extension.
+See [CHANGELOG.md](CHANGELOG.md) for detailed release notes.
 
-### 1.0.0
+### 2025.4.0
 
-Initial release of ...
+Initial release with support for:
+- Opening remote repository
+- Managing merge requests
+- Accessing CI/CD pipelines
+- Multiple Git provider support
 
-### 1.0.1
+## License
 
-Fixed issue #.
-
-### 1.1.0
-
-Added features X, Y, and Z.
-
----
+This extension is licensed under the [MIT License](LICENSE).
 
 ## Following extension guidelines
 

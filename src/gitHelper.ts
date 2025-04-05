@@ -33,10 +33,19 @@ export class GitHelper {
             await execAsync('git rev-parse --is-inside-work-tree', { cwd: path });
             return true;
         } catch (error) {
-            if (error instanceof Error && error.message.includes('not a git repository')) {
-                return false;
+            // Check if the error is because it's not a git repo
+            if (error instanceof Error) {
+                const errorMessage = error.message.toLowerCase();
+                if (errorMessage.includes('not a git repository') || 
+                    errorMessage.includes('no such file or directory') ||
+                    errorMessage.includes('enoent')) {
+                    return false;
+                }
             }
-            throw new GitError(`Failed to check Git repository status: ${error instanceof Error ? error.message : 'Unknown error'}`, 'git rev-parse');
+            throw new GitError(
+                `Failed to check Git repository status: ${error instanceof Error ? error.message : 'Unknown error'}`,
+                'git rev-parse'
+            );
         }
     }
 
@@ -146,16 +155,28 @@ export class GitHelper {
      */
     static async getDefaultBranch(path: string): Promise<string> {
         try {
-            const { stdout } = await execAsync('git remote show origin | grep "HEAD branch" | cut -d: -f2', { cwd: path });
-            return stdout.trim();
-        } catch (error) {
-            // Fallback to main or master
-            try {
-                const { stdout } = await execAsync('git branch -r | grep -E "origin/(main|master)" | head -1 | sed "s/.* origin\\///"', { cwd: path });
-                return stdout.trim() || 'main';
-            } catch {
-                return 'main'; // Default fallback
+            // First try to get the default branch from remote show
+            const { stdout: remoteInfo } = await execAsync('git remote show origin', { cwd: path });
+            const match = remoteInfo.match(/HEAD branch:\s+(\S+)/);
+            if (match && match[1]) {
+                return match[1];
             }
+
+            // If that fails, try to find main or master in remote branches
+            const { stdout: branches } = await execAsync('git branch -r', { cwd: path });
+            const branchList = branches.split('\n').map(b => b.trim());
+            
+            // Look for main or master
+            const defaultBranch = branchList.find(b => b === 'origin/main' || b === 'origin/master');
+            if (defaultBranch) {
+                return defaultBranch.replace('origin/', '');
+            }
+
+            // If all else fails, return main as default
+            return 'main';
+        } catch (error) {
+            // If we can't determine the default branch, return main
+            return 'main';
         }
     }
 } 
