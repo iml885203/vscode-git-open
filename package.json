@@ -4,7 +4,7 @@
   "description": "helps you quickly open the remote repository of the current project",
   "version": "0.0.1",
   "engines": {
-    "vscode": "^1.99.0"
+    "vscode": "^1.96.0"
   },
   "categories": [
     "Other"
@@ -14,8 +14,8 @@
   "contributes": {
     "commands": [
       {
-        "command": "git-open.helloWorld",
-        "title": "Hello World"
+        "command": "git-open.openRemoteRepo",
+        "title": "Git Open: Open Remote Repository"
       }
     ]
   },
