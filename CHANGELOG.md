@@ -1,6 +1,11 @@
 # Change Log
 
-## [2025.4.1] - 2024-04-05
+## [2025.4.2] - 2024-04-05
+
+### Changed
+- Update github links
+
+## [2025.4.2] - 2024-04-05
 
 ### Changed
 - Updated extension page style

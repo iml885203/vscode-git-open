@@ -2,17 +2,17 @@
   "name": "git-open",
   "displayName": "Git Open",
   "description": "helps you quickly open the remote repository of the current project",
-  "version": "2025.4.2",
+  "version": "2025.4.3",
   "publisher": "loganguo",
   "author": {
     "name": "Logan"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/logan/vscode-git-open"
+    "url": "https://github.com/iml885203/vscode-git-open"
   },
   "bugs": {
-    "url": "https://github.com/logan/vscode-git-open/issues"
+    "url": "https://github.com/iml885203/vscode-git-open/issues"
   },
   "license": "MIT",
   "keywords": [
@@ -86,6 +86,7 @@
     ]
   },
   "scripts": {
+    "publish": "vsce publish --no-dependencies",
     "vscode:prepublish": "pnpm run package",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",

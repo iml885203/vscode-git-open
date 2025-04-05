@@ -36,7 +36,7 @@ This extension contributes the following commands:
 
 ## Known Issues
 
-Please report issues on our [GitHub repository](https://github.com/logan/vscode-git-open/issues).
+Please report issues on our [GitHub repository](https://github.com/iml885203/vscode-git-open/issues).
 
 ## Release Notes
 
