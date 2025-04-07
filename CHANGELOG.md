@@ -1,6 +1,11 @@
 # Change Log
 
-## [2025.4.2] - 2024-04-05
+## [2025.4.4] - 2024-04-07
+
+### Changed
+- Use Quick Pick menu to use existing commands
+
+## [2025.4.3] - 2024-04-05
 
 ### Changed
 - Update github links

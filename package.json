@@ -2,7 +2,7 @@
   "name": "git-open",
   "displayName": "Git Open",
   "description": "helps you quickly open the remote repository of the current project",
-  "version": "2025.4.3",
+  "version": "2025.4.4",
   "publisher": "loganguo",
   "author": {
     "name": "Logan"
@@ -54,12 +54,15 @@
       {
         "command": "git-open.openPipelines",
         "title": "Git Open: Open Pipelines/Actions"
+      },
+      {
+        "command": "git-open.showQuickPick",
+        "title": "Git Open: Show Quick Pick Menu"
       }
     ],
     "keybindings": [
       {
-        "command": "workbench.action.quickOpen",
-        "args": ">Git Open",
+        "command": "git-open.showQuickPick",
         "key": "alt+g alt+g",
         "mac": "alt+g alt+g"
       },
