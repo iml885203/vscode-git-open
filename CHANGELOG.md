@@ -1,5 +1,10 @@
 # Change Log
 
+## [2025.4.5] - 2024-04-07
+
+### Added
+- Added provider configuration support in settings
+
 ## [2025.4.4] - 2024-04-07
 
 ### Changed

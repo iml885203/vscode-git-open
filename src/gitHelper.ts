@@ -1,5 +1,6 @@
 import { exec } from 'child_process';
 import { promisify } from 'util';
+import { Configuration } from './configuration';
 
 const execAsync = promisify(exec);
 
@@ -17,7 +18,18 @@ export interface GitRemoteInfo {
     baseUrl: string;
 }
 
+export interface GitProviderDomainConfig {
+    [domain: string]: GitRemoteInfo['provider'];
+}
+
 export class GitHelper {
+    /**
+     * Get the current domain configuration from VSCode settings
+     */
+    private static getDomainConfig(): GitProviderDomainConfig {
+        return Configuration.getProviderDomains();
+    }
+
     /**
      * Check if the given path is a Git repository
      * @param path - The filesystem path to check
@@ -110,22 +122,27 @@ export class GitHelper {
             throw new GitError('Invalid remote URL format');
         }
 
+        // For GitLab with subgroups, we want to preserve the full path structure
+        // The last part is always the repo name
+        const repo = parts[parts.length - 1];
+        // Everything before the repo name is the owner/group path
+        const owner = parts.slice(0, parts.length - 1).join('/');
+
         const info: GitRemoteInfo = {
             provider: 'unknown',
-            owner: parts[0],
-            repo: parts[1],
+            owner: owner,
+            repo: repo,
             baseUrl: `${url.protocol}//${url.host}`
         };
 
-        // Determine the provider
-        if (url.host === 'github.com') {
-            info.provider = 'github';
-        } else if (url.host === 'gitlab.com' || url.host.includes('gitlab')) {
-            info.provider = 'gitlab';
-        } else if (url.host.includes('bitbucket')) {
-            info.provider = 'bitbucket';
-        } else if (url.host.includes('azure') || url.host.includes('visualstudio')) {
-            info.provider = 'azure';
+        // Check domain against configured mappings
+        const domainConfig = this.getDomainConfig();
+        const matchingDomain = Object.keys(domainConfig).find(domain => 
+            url.host === domain || url.host.endsWith(`.${domain}`)
+        );
+
+        if (matchingDomain) {
+            info.provider = domainConfig[matchingDomain];
         }
 
         return info;

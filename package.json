@@ -2,7 +2,7 @@
   "name": "git-open",
   "displayName": "Git Open",
   "description": "helps you quickly open the remote repository of the current project",
-  "version": "2025.4.4",
+  "version": "2025.4.5",
   "publisher": "loganguo",
   "author": {
     "name": "Logan"
@@ -86,7 +86,33 @@
         "key": "alt+g alt+p",
         "mac": "alt+g alt+p"
       }
-    ]
+    ],
+    "configuration": {
+      "title": "Git Open",
+      "properties": {
+        "git-open.providerDomains": {
+          "type": "object",
+          "description": "Custom domain mappings for Git providers. Key is the domain, value is the provider type ('github', 'gitlab', 'bitbucket', 'azure').",
+          "additionalProperties": {
+            "type": "string",
+            "enum": ["github", "gitlab", "bitbucket", "azure"]
+          },
+          "default": {
+            "github.com": "github",
+            "gitlab.com": "gitlab",
+            "bitbucket.org": "bitbucket",
+            "visualstudio.com": "azure",
+            "dev.azure.com": "azure"
+          },
+          "examples": [
+            {
+              "git.company.com": "gitlab",
+              "custom-github.org": "github"
+            }
+          ]
+        }
+      }
+    }
   },
   "scripts": {
     "vscode:publish": "vsce publish --no-dependencies",

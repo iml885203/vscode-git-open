@@ -1,7 +1,6 @@
 // The module 'vscode' contains the VS Code extensibility API
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
-import { GitHelper } from './gitHelper';
 import { OpenRemoteRepoCommand } from './commands/openRemoteRepoCommand';
 import { OpenMergeRequestsCommand } from './commands/openMergeRequestsCommand';
 import { CreateMergeRequestCommand } from './commands/createMergeRequestCommand';
@@ -22,6 +21,17 @@ export function activate(context: vscode.ExtensionContext) {
 	CreateMergeRequestCommand.register(context);
 	OpenPipelinesCommand.register(context);
 	QuickPickCommand.register(context);
+
+	// Register configuration change listener
+	context.subscriptions.push(
+		vscode.workspace.onDidChangeConfiguration(e => {
+			if (e.affectsConfiguration('git-open.providerDomains')) {
+				// Configuration has changed, but we don't need to do anything
+				// since we always read the latest configuration when needed
+				console.log('Git Open provider domains configuration updated');
+			}
+		})
+	);
 }
 
 // This method is called when your extension is deactivated
