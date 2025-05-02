@@ -52,7 +52,7 @@ export class CreateMergeRequestCommand extends BaseCommand {
             case 'azure':
                 return `${baseUrl}/${owner}/${repo}/pullrequestcreate?sourceRef=${sourceBranch}&targetRef=${targetBranch}`;
             default:
-                throw new Error('Unsupported Git provider');
+                throw new Error(`Unsupported Git provider. Current baseUrl: ${baseUrl}. If you're using a private GitLab instance, please configure it in Settings > git-open.providerDomains.`);
         }
     }
 } 

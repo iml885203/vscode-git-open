@@ -1,5 +1,10 @@
 # Change Log
 
+## [2025.5.0] - 2025-05-02
+
+### Added
+- Better error handling
+
 ## [2025.4.5] - 2024-04-07
 
 ### Added
