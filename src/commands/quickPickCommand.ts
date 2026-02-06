@@ -28,7 +28,6 @@ export class QuickPickCommand {
                 {
                     label: '$(repo) Open Repository',
                     description: 'View repository homepage',
-                    detail: 'Shortcut: Alt+G Alt+O',
                     command: 'git-open.openRemoteRepo'
                 },
                 {
@@ -38,13 +37,11 @@ export class QuickPickCommand {
                 {
                     label: '$(git-pull-request) Open Merge Requests',
                     description: 'Browse all open pull requests/merge requests',
-                    detail: 'Shortcut: Alt+G Alt+M',
                     command: 'git-open.openMergeRequests'
                 },
                 {
                     label: '$(git-merge) Create Merge Request',
                     description: 'Create new pull request from current branch',
-                    detail: 'Shortcut: Alt+G Alt+R',
                     command: 'git-open.createMergeRequest'
                 },
                 {
@@ -54,15 +51,13 @@ export class QuickPickCommand {
                 {
                     label: '$(play) Open Pipelines',
                     description: 'View CI/CD pipeline runs and workflows',
-                    detail: 'Shortcut: Alt+G Alt+P',
                     command: 'git-open.openPipelines'
                 }
             ];
 
             const selected = await vscode.window.showQuickPick(items, {
-                placeHolder: 'Choose a Git action',
-                matchOnDescription: true,
-                matchOnDetail: true
+                placeHolder: 'Choose a Git action (Tip: You can customize shortcuts in Keyboard Shortcuts settings)',
+                matchOnDescription: true
             });
 
             if (selected?.command) {
