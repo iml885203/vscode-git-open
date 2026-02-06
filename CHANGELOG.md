@@ -1,5 +1,36 @@
 # Change Log
 
+## [2026.2.0] - 2026-02-06
+
+### Added
+- **Multi-repo workspace support**: Automatically prompts for repository selection when multiple Git repos are in workspace
+- **Repo selection cache**: Remembers recently used repositories with 7-day TTL and frequency-based sorting
+- **Smart error handling**: Actionable error messages with helpful buttons
+  - "Not a Git repository" → [Initialize Git] button
+  - "No remote URL" → [Add Remote] button
+  - Network errors → [Retry] option
+- **Enhanced Quick Pick UI**: Organized sections with separators (Repository, Pull Requests & Merge Requests, CI/CD)
+- **Git command caching**: Performance improvements with TTL-based caching
+  - Remote URL: 60s TTL
+  - Current branch: 30s TTL
+  - Default branch: 5min TTL
+- **Configuration change listener**: Automatically clears cache when provider domains settings change
+
+### Changed
+- **Non-intrusive notifications**: Success messages now use status bar (5-second auto-dismiss) instead of popups
+- **Parallel execution**: Git commands in CreateMergeRequest now run in parallel for faster execution
+- **URL builder refactoring**: Centralized URL construction logic, removing 88 lines of duplicate code
+
+### Fixed
+- Repo selection cache sorting order (now shows most relevant repos first)
+- Cache invalidation when provider domains configuration changes
+- Mock storage implementation in RepoSelectionCache tests
+
+### Performance
+- ~60% faster CreateMergeRequest command via parallel Git operations
+- Reduced Git command overhead through intelligent caching
+- Improved multi-repo workspace UX with smart selection history
+
 ## [2025.5.0] - 2025-05-02
 
 ### Added

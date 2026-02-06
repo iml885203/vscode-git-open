@@ -1,8 +1,8 @@
 {
   "name": "git-open",
   "displayName": "Git Open",
-  "description": "helps you quickly open the remote repository of the current project",
-  "version": "2025.5.0",
+  "description": "Quickly open Git repositories, PRs, and CI/CD pipelines. Supports GitHub, GitLab, Bitbucket, and Azure DevOps.",
+  "version": "2026.2.0",
   "publisher": "loganguo",
   "author": {
     "name": "Logan"
