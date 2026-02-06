@@ -28,7 +28,7 @@ export class OpenRemoteRepoCommand extends BaseCommand {
             const url = UrlBuilder.buildRepoUrl(remoteInfo);
 
             await vscode.env.openExternal(vscode.Uri.parse(url));
-            vscode.window.showInformationMessage(`Opening remote repository: ${url}`);
+            this.showSuccess('Opened remote repository');
         } catch (error) {
             await this.handleError(error);
         }

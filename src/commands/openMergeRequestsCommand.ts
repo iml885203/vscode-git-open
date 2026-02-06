@@ -28,7 +28,7 @@ export class OpenMergeRequestsCommand extends BaseCommand {
             const url = UrlBuilder.buildMergeRequestsUrl(remoteInfo);
 
             await vscode.env.openExternal(vscode.Uri.parse(url));
-            vscode.window.showInformationMessage(`Opening merge requests page: ${url}`);
+            this.showSuccess('Opened merge requests page');
         } catch (error) {
             await this.handleError(error);
         }
