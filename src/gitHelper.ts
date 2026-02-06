@@ -22,12 +22,60 @@ export interface GitProviderDomainConfig {
     [domain: string]: GitRemoteInfo['provider'];
 }
 
+interface CacheEntry<T> {
+    value: T;
+    timestamp: number;
+}
+
 export class GitHelper {
+    // Cache for remote URLs (60 seconds TTL)
+    private static remoteUrlCache = new Map<string, CacheEntry<string>>();
+    // Cache for current branches (30 seconds TTL)
+    private static currentBranchCache = new Map<string, CacheEntry<string>>();
+    // Cache for default branches (5 minutes TTL)
+    private static defaultBranchCache = new Map<string, CacheEntry<string>>();
+    // Cache for remote info (60 seconds TTL)
+    private static remoteInfoCache = new Map<string, CacheEntry<GitRemoteInfo>>();
+
+    private static readonly REMOTE_URL_TTL = 60 * 1000; // 60 seconds
+    private static readonly CURRENT_BRANCH_TTL = 30 * 1000; // 30 seconds
+    private static readonly DEFAULT_BRANCH_TTL = 5 * 60 * 1000; // 5 minutes
+    private static readonly REMOTE_INFO_TTL = 60 * 1000; // 60 seconds
     /**
      * Get the current domain configuration from VSCode settings
      */
     private static getDomainConfig(): GitProviderDomainConfig {
         return Configuration.getProviderDomains();
+    }
+
+    /**
+     * Check if a cache entry is still valid
+     */
+    private static isCacheValid<T>(entry: CacheEntry<T> | undefined, ttl: number): boolean {
+        if (!entry) {
+            return false;
+        }
+        return Date.now() - entry.timestamp < ttl;
+    }
+
+    /**
+     * Clear all caches
+     */
+    static clearCache(): void {
+        this.remoteUrlCache.clear();
+        this.currentBranchCache.clear();
+        this.defaultBranchCache.clear();
+        this.remoteInfoCache.clear();
+    }
+
+    /**
+     * Clear cache for a specific path
+     */
+    static clearCacheForPath(path: string): void {
+        this.remoteUrlCache.delete(path);
+        this.currentBranchCache.delete(path);
+        this.defaultBranchCache.delete(path);
+        this.remoteInfoCache.delete(path);
     }
 
     /**
@@ -72,6 +120,12 @@ export class GitHelper {
             throw new GitError('Path is required');
         }
 
+        // Check cache first
+        const cached = this.remoteUrlCache.get(path);
+        if (this.isCacheValid(cached, this.REMOTE_URL_TTL)) {
+            return cached!.value;
+        }
+
         try {
             // Verify it's a git repository first
             const isGitRepo = await this.isGitRepository(path);
@@ -81,21 +135,27 @@ export class GitHelper {
 
             // Get the remote URL
             const { stdout: remoteUrl } = await execAsync('git config --get remote.origin.url', { cwd: path });
-            
+
             if (!remoteUrl.trim()) {
                 throw new GitError('No remote URL found');
             }
 
             // Clean and convert the URL
             let cleanUrl = remoteUrl.trim().replace(/\.git$/, '');
-            
+
             // Convert SSH URL to HTTP URL if necessary
             if (cleanUrl.startsWith('git@')) {
                 cleanUrl = cleanUrl
                     .replace(':', '/')
                     .replace('git@', 'https://');
             }
-            
+
+            // Cache the result
+            this.remoteUrlCache.set(path, {
+                value: cleanUrl,
+                timestamp: Date.now()
+            });
+
             return cleanUrl;
         } catch (error) {
             if (error instanceof GitError) {
@@ -114,6 +174,12 @@ export class GitHelper {
      * @returns Promise<GitRemoteInfo> - Information about the remote repository
      */
     static async getRemoteInfo(path: string): Promise<GitRemoteInfo> {
+        // Check cache first
+        const cached = this.remoteInfoCache.get(path);
+        if (this.isCacheValid(cached, this.REMOTE_INFO_TTL)) {
+            return cached!.value;
+        }
+
         const remoteUrl = await this.getRemoteUrl(path);
         const url = new URL(remoteUrl);
         const parts = url.pathname.split('/').filter(Boolean);
@@ -137,13 +203,19 @@ export class GitHelper {
 
         // Check domain against configured mappings
         const domainConfig = this.getDomainConfig();
-        const matchingDomain = Object.keys(domainConfig).find(domain => 
+        const matchingDomain = Object.keys(domainConfig).find(domain =>
             url.host === domain || url.host.endsWith(`.${domain}`)
         );
 
         if (matchingDomain) {
             info.provider = domainConfig[matchingDomain];
         }
+
+        // Cache the result
+        this.remoteInfoCache.set(path, {
+            value: info,
+            timestamp: Date.now()
+        });
 
         return info;
     }
@@ -154,9 +226,23 @@ export class GitHelper {
      * @returns Promise<string> - The current branch name
      */
     static async getCurrentBranch(path: string): Promise<string> {
+        // Check cache first
+        const cached = this.currentBranchCache.get(path);
+        if (this.isCacheValid(cached, this.CURRENT_BRANCH_TTL)) {
+            return cached!.value;
+        }
+
         try {
             const { stdout } = await execAsync('git rev-parse --abbrev-ref HEAD', { cwd: path });
-            return stdout.trim();
+            const branch = stdout.trim();
+
+            // Cache the result
+            this.currentBranchCache.set(path, {
+                value: branch,
+                timestamp: Date.now()
+            });
+
+            return branch;
         } catch (error) {
             throw new GitError(
                 `Failed to get current branch: ${error instanceof Error ? error.message : 'Unknown error'}`,
@@ -171,29 +257,59 @@ export class GitHelper {
      * @returns Promise<string> - The default branch name
      */
     static async getDefaultBranch(path: string): Promise<string> {
+        // Check cache first
+        const cached = this.defaultBranchCache.get(path);
+        if (this.isCacheValid(cached, this.DEFAULT_BRANCH_TTL)) {
+            return cached!.value;
+        }
+
         try {
             // First try to get the default branch from remote show
             const { stdout: remoteInfo } = await execAsync('git remote show origin', { cwd: path });
             const match = remoteInfo.match(/HEAD branch:\s+(\S+)/);
             if (match && match[1]) {
-                return match[1];
+                const branch = match[1];
+                // Cache the result
+                this.defaultBranchCache.set(path, {
+                    value: branch,
+                    timestamp: Date.now()
+                });
+                return branch;
             }
 
             // If that fails, try to find main or master in remote branches
             const { stdout: branches } = await execAsync('git branch -r', { cwd: path });
             const branchList = branches.split('\n').map(b => b.trim());
-            
+
             // Look for main or master
             const defaultBranch = branchList.find(b => b === 'origin/main' || b === 'origin/master');
             if (defaultBranch) {
-                return defaultBranch.replace('origin/', '');
+                const branch = defaultBranch.replace('origin/', '');
+                // Cache the result
+                this.defaultBranchCache.set(path, {
+                    value: branch,
+                    timestamp: Date.now()
+                });
+                return branch;
             }
 
             // If all else fails, return main as default
-            return 'main';
+            const fallbackBranch = 'main';
+            // Cache the fallback result
+            this.defaultBranchCache.set(path, {
+                value: fallbackBranch,
+                timestamp: Date.now()
+            });
+            return fallbackBranch;
         } catch {
             // If we can't determine the default branch, return main
-            return 'main';
+            const fallbackBranch = 'main';
+            // Cache the fallback result
+            this.defaultBranchCache.set(path, {
+                value: fallbackBranch,
+                timestamp: Date.now()
+            });
+            return fallbackBranch;
         }
     }
 } 

@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { BaseCommand } from './baseCommand';
 import { GitHelper } from '../gitHelper';
+import { UrlBuilder } from '../urlBuilder';
 
 export class OpenRemoteRepoCommand extends BaseCommand {
     public static readonly commandId = 'git-open.openRemoteRepo';
@@ -23,10 +24,11 @@ export class OpenRemoteRepoCommand extends BaseCommand {
     protected async execute(): Promise<void> {
         try {
             const projectPath = await this.getWorkspacePath();
-            const remoteUrl = await GitHelper.getRemoteUrl(projectPath);
+            const remoteInfo = await GitHelper.getRemoteInfo(projectPath);
+            const url = UrlBuilder.buildRepoUrl(remoteInfo);
 
-            await vscode.env.openExternal(vscode.Uri.parse(remoteUrl));
-            vscode.window.showInformationMessage(`Opening remote repository: ${remoteUrl}`);
+            await vscode.env.openExternal(vscode.Uri.parse(url));
+            vscode.window.showInformationMessage(`Opening remote repository: ${url}`);
         } catch (error) {
             this.handleError(error);
         }
