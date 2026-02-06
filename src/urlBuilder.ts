@@ -92,8 +92,9 @@ export class UrlBuilder {
      * Show error message with actionable buttons
      */
     static async showUnsupportedProviderError(baseUrl: string): Promise<void> {
-        // Extract domain from baseUrl for cleaner display
-        const domain = baseUrl.replace(/^https?:\/\//, '').replace(/:\d+$/, '');
+        // Extract only the host (domain) from baseUrl for cleaner display
+        const url = new URL(baseUrl);
+        const domain = url.host;
 
         // Detect likely provider type based on domain patterns
         let suggestion = '';
