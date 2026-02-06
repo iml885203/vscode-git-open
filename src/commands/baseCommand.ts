@@ -1,6 +1,6 @@
 import * as vscode from 'vscode';
 import { GitError, GitHelper } from '../gitHelper';
-import { UrlBuilder } from '../urlBuilder';
+import { UrlBuilder, UnsupportedProviderError } from '../urlBuilder';
 
 export interface WorkspaceFolderItem {
     label: string;
@@ -92,6 +92,13 @@ export abstract class BaseCommand {
      * @param error The error to handle
      */
     protected async handleError(error: unknown): Promise<void> {
+        // Handle unsupported provider errors with custom UI
+        if (error instanceof UnsupportedProviderError) {
+            await UrlBuilder.showUnsupportedProviderError(error.baseUrl);
+            return;
+        }
+
+        // Handle other errors
         let message = 'An unexpected error occurred';
 
         if (error instanceof GitError) {
@@ -99,23 +106,10 @@ export abstract class BaseCommand {
             if (error.command) {
                 message += ` (${error.command})`;
             }
-            vscode.window.showErrorMessage(message);
         } else if (error instanceof Error) {
             message = error.message;
-
-            // Check if this is an unsupported provider error
-            if (message.includes('Unsupported Git provider')) {
-                // Extract baseUrl from error message
-                const match = message.match(/baseUrl:\s+([^\s.]+)/);
-                if (match && match[1]) {
-                    await UrlBuilder.showUnsupportedProviderError(match[1]);
-                    return;
-                }
-            }
-
-            vscode.window.showErrorMessage(message);
-        } else {
-            vscode.window.showErrorMessage(message);
         }
+
+        vscode.window.showErrorMessage(message);
     }
 } 

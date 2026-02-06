@@ -2,6 +2,19 @@ import * as vscode from 'vscode';
 import { GitRemoteInfo } from './gitHelper';
 
 /**
+ * Custom error for unsupported Git providers
+ */
+export class UnsupportedProviderError extends Error {
+    constructor(public readonly baseUrl: string) {
+        super(
+            `Unsupported Git provider. Current baseUrl: ${baseUrl}. ` +
+            `If you're using a private GitLab instance, please configure it in Settings > git-open.providerDomains.`
+        );
+        this.name = 'UnsupportedProviderError';
+    }
+}
+
+/**
  * Centralized URL builder for all Git providers
  * Supports GitHub, GitLab, Bitbucket, and Azure DevOps
  */
@@ -81,11 +94,8 @@ export class UrlBuilder {
     /**
      * Create a standardized error for unsupported providers with actionable guidance
      */
-    private static createUnsupportedProviderError(baseUrl: string): Error {
-        return new Error(
-            `Unsupported Git provider. Current baseUrl: ${baseUrl}. ` +
-            `If you're using a private GitLab instance, please configure it in Settings > git-open.providerDomains.`
-        );
+    private static createUnsupportedProviderError(baseUrl: string): UnsupportedProviderError {
+        return new UnsupportedProviderError(baseUrl);
     }
 
     /**
