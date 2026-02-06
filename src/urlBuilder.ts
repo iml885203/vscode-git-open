@@ -92,13 +92,28 @@ export class UrlBuilder {
      * Show error message with actionable buttons
      */
     static async showUnsupportedProviderError(baseUrl: string): Promise<void> {
+        // Extract domain from baseUrl for cleaner display
+        const domain = baseUrl.replace(/^https?:\/\//, '').replace(/:\d+$/, '');
+
+        // Detect likely provider type based on domain patterns
+        let suggestion = '';
+        if (domain.includes('gitlab')) {
+            suggestion = ' (Looks like GitLab)';
+        } else if (domain.includes('github')) {
+            suggestion = ' (Looks like GitHub)';
+        } else if (domain.includes('bitbucket')) {
+            suggestion = ' (Looks like Bitbucket)';
+        } else if (domain.includes('azure')) {
+            suggestion = ' (Looks like Azure DevOps)';
+        }
+
         const selection = await vscode.window.showErrorMessage(
-            `Unsupported Git provider: ${baseUrl}`,
-            'Open Settings',
+            `Unknown Git provider: ${domain}${suggestion}`,
+            'Configure Provider',
             'Learn More'
         );
 
-        if (selection === 'Open Settings') {
+        if (selection === 'Configure Provider') {
             vscode.commands.executeCommand(
                 'workbench.action.openSettings',
                 'git-open.providerDomains'
