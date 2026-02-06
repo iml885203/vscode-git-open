@@ -121,6 +121,8 @@
   },
   "scripts": {
     "vscode:publish": "vsce publish --no-dependencies",
+    "ovsx:publish": "ovsx publish --no-dependencies",
+    "publish": "pnpm run vscode:publish && pnpm run ovsx:publish",
     "vscode:prepublish": "pnpm run package",
     "compile": "pnpm run check-types && pnpm run lint && node esbuild.js",
     "watch": "npm-run-all -p watch:*",
@@ -140,10 +142,12 @@
     "@types/vscode": "^1.109.0",
     "@vscode/test-cli": "^0.0.12",
     "@vscode/test-electron": "^2.5.2",
+    "@vscode/vsce": "^3.7.1",
     "esbuild": "^0.25.12",
     "eslint": "^9.39.2",
     "glob": "^11.0.1",
     "npm-run-all2": "^8.0.4",
+    "ovsx": "^0.10.9",
     "typescript": "^5.9.3",
     "typescript-eslint": "^8.54.0"
   }
