@@ -1,5 +1,6 @@
 import * as vscode from 'vscode';
 import { GitError, GitHelper } from '../gitHelper';
+import { UrlBuilder, UnsupportedProviderError } from '../urlBuilder';
 
 export interface WorkspaceFolderItem {
     label: string;
@@ -90,9 +91,16 @@ export abstract class BaseCommand {
      * Handle command execution errors
      * @param error The error to handle
      */
-    protected handleError(error: unknown): void {
+    protected async handleError(error: unknown): Promise<void> {
+        // Handle unsupported provider errors with custom UI
+        if (error instanceof UnsupportedProviderError) {
+            await UrlBuilder.showUnsupportedProviderError(error.baseUrl);
+            return;
+        }
+
+        // Handle other errors
         let message = 'An unexpected error occurred';
-        
+
         if (error instanceof GitError) {
             message = `Git error: ${error.message}`;
             if (error.command) {

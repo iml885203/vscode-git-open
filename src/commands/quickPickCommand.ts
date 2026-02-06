@@ -51,21 +51,13 @@ export class QuickPickCommand {
                 await vscode.commands.executeCommand(selected.command);
             }
         } catch (error) {
-            this.handleError(error);
-        }
-    }
+            let message = 'An unexpected error occurred';
 
-    /**
-     * Handle command execution errors
-     * @param error The error to handle
-     */
-    private handleError(error: unknown): void {
-        let message = 'An unexpected error occurred';
-        
-        if (error instanceof Error) {
-            message = error.message;
-        }
+            if (error instanceof Error) {
+                message = error.message;
+            }
 
-        vscode.window.showErrorMessage(message);
+            vscode.window.showErrorMessage(message);
+        }
     }
 } 

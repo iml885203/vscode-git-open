@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { BaseCommand } from './baseCommand';
-import { GitHelper, GitRemoteInfo } from '../gitHelper';
+import { GitHelper } from '../gitHelper';
+import { UrlBuilder } from '../urlBuilder';
 
 export class OpenPipelinesCommand extends BaseCommand {
     public static readonly commandId = 'git-open.openPipelines';
@@ -24,33 +25,12 @@ export class OpenPipelinesCommand extends BaseCommand {
         try {
             const projectPath = await this.getWorkspacePath();
             const remoteInfo = await GitHelper.getRemoteInfo(projectPath);
-            
-            const url = this.getPipelinesUrl(remoteInfo);
+            const url = UrlBuilder.buildPipelinesUrl(remoteInfo);
+
             await vscode.env.openExternal(vscode.Uri.parse(url));
-            
             vscode.window.showInformationMessage(`Opening pipelines/actions page: ${url}`);
         } catch (error) {
-            this.handleError(error);
-        }
-    }
-
-    /**
-     * Get the URL for viewing pipelines/actions
-     */
-    private getPipelinesUrl(remoteInfo: GitRemoteInfo): string {
-        const { provider, baseUrl, owner, repo } = remoteInfo;
-
-        switch (provider) {
-            case 'github':
-                return `${baseUrl}/${owner}/${repo}/actions`;
-            case 'gitlab':
-                return `${baseUrl}/${owner}/${repo}/-/pipelines`;
-            case 'bitbucket':
-                return `${baseUrl}/${owner}/${repo}/pipelines`;
-            case 'azure':
-                return `${baseUrl}/${owner}/${repo}/_build`;
-            default:
-                throw new Error(`Unsupported Git provider. Current baseUrl: ${baseUrl}. If you're using a private GitLab instance, please configure it in Settings > git-open.providerDomains.`);
+            await this.handleError(error);
         }
     }
 } 
