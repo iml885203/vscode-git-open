@@ -35,7 +35,7 @@ export class CreateMergeRequestCommand extends BaseCommand {
             const url = UrlBuilder.buildCreateMergeRequestUrl(remoteInfo, currentBranch, defaultBranch);
             await vscode.env.openExternal(vscode.Uri.parse(url));
 
-            vscode.window.showInformationMessage(`Creating merge request from ${currentBranch} into ${defaultBranch}`);
+            this.showSuccess(`Creating MR: ${currentBranch} → ${defaultBranch}`);
         } catch (error) {
             await this.handleError(error);
         }

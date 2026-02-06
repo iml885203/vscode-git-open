@@ -28,7 +28,7 @@ export class OpenPipelinesCommand extends BaseCommand {
             const url = UrlBuilder.buildPipelinesUrl(remoteInfo);
 
             await vscode.env.openExternal(vscode.Uri.parse(url));
-            vscode.window.showInformationMessage(`Opening pipelines/actions page: ${url}`);
+            this.showSuccess('Opened pipelines page');
         } catch (error) {
             await this.handleError(error);
         }

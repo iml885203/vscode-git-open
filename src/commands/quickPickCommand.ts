@@ -1,5 +1,9 @@
 import * as vscode from 'vscode';
 
+interface CommandQuickPickItem extends vscode.QuickPickItem {
+    command?: string;
+}
+
 export class QuickPickCommand {
     public static readonly commandId = 'git-open.showQuickPick';
 
@@ -20,34 +24,47 @@ export class QuickPickCommand {
      */
     private async execute(): Promise<void> {
         try {
-            const items = [
+            const items: CommandQuickPickItem[] = [
+				{
+					kind: vscode.QuickPickItemKind.Separator,
+					label: 'Repository'
+				},
                 {
                     label: '$(repo) Open Repository',
-                    description: 'Open the remote repository in browser',
+                    description: 'View repository homepage',
                     command: 'git-open.openRemoteRepo'
                 },
                 {
+                    kind: vscode.QuickPickItemKind.Separator,
+                    label: 'Pull Requests & Merge Requests'
+                },
+                {
                     label: '$(git-pull-request) Open Merge Requests',
-                    description: 'Open merge requests/pull requests page',
+                    description: 'Browse all open pull requests/merge requests',
                     command: 'git-open.openMergeRequests'
                 },
                 {
                     label: '$(git-merge) Create Merge Request',
-                    description: 'Create a new merge request/pull request',
+                    description: 'Create new pull request from current branch',
                     command: 'git-open.createMergeRequest'
                 },
                 {
+                    kind: vscode.QuickPickItemKind.Separator,
+                    label: 'CI/CD'
+                },
+                {
                     label: '$(play) Open Pipelines',
-                    description: 'Open pipelines/actions page',
+                    description: 'View CI/CD pipeline runs and workflows',
                     command: 'git-open.openPipelines'
                 }
             ];
 
             const selected = await vscode.window.showQuickPick(items, {
-                placeHolder: 'Select an action to perform'
+                placeHolder: 'Choose a Git action (Tip: You can customize shortcuts in Keyboard Shortcuts settings)',
+                matchOnDescription: true
             });
 
-            if (selected) {
+            if (selected?.command) {
                 await vscode.commands.executeCommand(selected.command);
             }
         } catch (error) {
