@@ -51,7 +51,7 @@ export class RepoSelectionCache {
         workspaceHistory.sort((a, b) => {
             const scoreA = a.count * (1 + (Date.now() - a.timestamp) / RepoSelectionCache.HISTORY_TTL);
             const scoreB = b.count * (1 + (Date.now() - b.timestamp) / RepoSelectionCache.HISTORY_TTL);
-            return scoreA - scoreB;
+            return scoreB - scoreA; // Higher score = more relevant
         });
 
         // Keep only top N
