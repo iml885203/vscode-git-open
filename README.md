@@ -20,6 +20,8 @@ Quickly open Git repository pages in your browser. Support for GitHub, GitLab, B
 | Open Pipelines     | `Alt+G Alt+P`   | View CI/CD pipelines               |
 | Quick Access       | `Alt+G Alt+G`   | Show all Git Open commands         |
 
+![Quick Pick UI](docs/gitopen.png)
+
 ## Requirements
 
 - Git Installed and Available in PATH
@@ -35,7 +37,7 @@ If you are using a private or self-hosted GitLab instance (for example, `git.exa
 
 1. Open VS Code Settings (`Ctrl+,` or `Cmd+,`).
 2. Search for `git-open.providerDomains`.
-3. Add a custom mapping for your domain.  
+3. Add a custom mapping for your domain.
    For example, to treat `git.example.com` as a GitLab instance, add:
    ```json
    {
@@ -46,6 +48,8 @@ If you are using a private or self-hosted GitLab instance (for example, `git.exa
    ```
    You can do this via the settings UI (as an object) or directly in your `settings.json`.
 
+![Provider Domains Configuration](docs/settings.png)
+
 This tells the extension to treat your specified domain as a GitLab server, enabling all GitLab-specific features.
 
 ### Commands Contributed
@@ -54,6 +58,52 @@ This tells the extension to treat your specified domain as a GitLab server, enab
 * `git-open.openMergeRequests`: Open Merge Requests/Pull Requests
 * `git-open.createMergeRequest`: Create Merge Request/Pull Request
 * `git-open.openPipelines`: Open Pipelines/Actions
+
+## Troubleshooting
+
+### Extension not detecting Git repository
+
+**Problem**: Commands don't work or show "Not a Git repository" error.
+
+**Solution**:
+- Ensure you have Git installed and available in your PATH
+- Verify the folder is a Git repository by running `git status` in the terminal
+- If not a Git repository, click the "Initialize Git" button in the error message or run `git init`
+
+### Remote URL not found
+
+**Problem**: Error message "No remote repository configured".
+
+**Solution**:
+- Check if your repository has a remote configured: `git remote -v`
+- Add a remote if missing: `git remote add origin <your-repo-url>`
+- Or click the "Add Remote" button in the error message
+
+### Provider not recognized
+
+**Problem**: Extension doesn't recognize your self-hosted Git provider (GitLab, GitHub Enterprise, etc.).
+
+**Solution**:
+1. Open VS Code Settings (`Ctrl+,` or `Cmd+,`)
+2. Search for `git-open.providerDomains`
+3. Add your custom domain mapping:
+   ```json
+   {
+     "git-open.providerDomains": {
+       "git.yourcompany.com": "gitlab"
+     }
+   }
+   ```
+4. Supported provider types: `github`, `gitlab`, `bitbucket`, `azure`
+
+### Commands not working in multi-repo workspace
+
+**Problem**: Extension doesn't prompt for repository selection.
+
+**Solution**:
+- Ensure each workspace folder is a valid Git repository
+- The extension will automatically detect and prompt you to choose when multiple Git repos are found
+- Your selection is cached and prioritized for future use
 
 ## Known Issues
 

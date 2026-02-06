@@ -123,4 +123,52 @@ suite('RepoSelectionCache Test Suite', () => {
 			assert.doesNotThrow(() => cache.cleanup());
 		});
 	});
+
+	suite('Edge Cases', () => {
+		test('should handle workspace with no repositories', () => {
+			const suggestions = cache.getSuggestions('/empty-workspace');
+			assert.strictEqual(suggestions.length, 0);
+
+			const lastSelected = cache.getLastSelected('/empty-workspace');
+			assert.strictEqual(lastSelected, undefined);
+		});
+
+		test('should handle duplicate recordings gracefully', () => {
+			for (let i = 0; i < 20; i++) {
+				cache.recordSelection('/workspace', '/workspace/repo1');
+			}
+
+			const suggestions = cache.getSuggestions('/workspace');
+			assert.strictEqual(suggestions.length, 1);
+			assert.strictEqual(suggestions[0], '/workspace/repo1');
+		});
+
+		test('should handle special characters in paths', () => {
+			const specialPath = '/workspace/my-repo (1)';
+			cache.recordSelection('/workspace', specialPath);
+
+			const lastSelected = cache.getLastSelected('/workspace');
+			assert.strictEqual(lastSelected, specialPath);
+		});
+
+		test('should sort repos by score correctly', () => {
+			// Record repo1 three times
+			cache.recordSelection('/workspace', '/workspace/repo1');
+			cache.recordSelection('/workspace', '/workspace/repo1');
+			cache.recordSelection('/workspace', '/workspace/repo1');
+
+			// Record repo2 once
+			cache.recordSelection('/workspace', '/workspace/repo2');
+
+			const suggestions = cache.getSuggestions('/workspace');
+			// repo1 should be first due to higher frequency
+			assert.strictEqual(suggestions[0], '/workspace/repo1');
+		});
+
+		test('should handle empty string paths', () => {
+			cache.recordSelection('', '/repo');
+			const suggestions = cache.getSuggestions('');
+			assert.strictEqual(suggestions.length, 1);
+		});
+	});
 });
