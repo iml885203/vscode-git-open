@@ -28,7 +28,7 @@
     "ci-cd"
   ],
   "engines": {
-    "vscode": "^1.96.0"
+    "vscode": "^1.109.0"
   },
   "categories": [
     "Other",
@@ -95,7 +95,12 @@
           "description": "Custom domain mappings for Git providers. Key is the domain, value is the provider type ('github', 'gitlab', 'bitbucket', 'azure').",
           "additionalProperties": {
             "type": "string",
-            "enum": ["github", "gitlab", "bitbucket", "azure"]
+            "enum": [
+              "github",
+              "gitlab",
+              "bitbucket",
+              "azure"
+            ]
           },
           "default": {
             "github.com": "github",
@@ -130,18 +135,16 @@
     "test": "vscode-test"
   },
   "devDependencies": {
-    "@types/glob": "^8.1.0",
     "@types/mocha": "^10.0.10",
     "@types/node": "20.x",
-    "@types/vscode": "^1.96.0",
-    "@typescript-eslint/eslint-plugin": "^8.28.0",
-    "@typescript-eslint/parser": "^8.28.0",
-    "@vscode/test-cli": "^0.0.10",
-    "@vscode/test-electron": "^2.4.1",
-    "esbuild": "^0.25.1",
-    "eslint": "^9.23.0",
+    "@types/vscode": "^1.109.0",
+    "@vscode/test-cli": "^0.0.12",
+    "@vscode/test-electron": "^2.5.2",
+    "esbuild": "^0.25.12",
+    "eslint": "^9.39.2",
     "glob": "^11.0.1",
-    "npm-run-all": "^4.1.5",
-    "typescript": "^5.8.2"
+    "npm-run-all2": "^8.0.4",
+    "typescript": "^5.9.3",
+    "typescript-eslint": "^8.54.0"
   }
 }

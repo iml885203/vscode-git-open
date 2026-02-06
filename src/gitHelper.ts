@@ -191,7 +191,7 @@ export class GitHelper {
 
             // If all else fails, return main as default
             return 'main';
-        } catch (error) {
+        } catch {
             // If we can't determine the default branch, return main
             return 'main';
         }
