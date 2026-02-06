@@ -26,7 +26,7 @@ suite('Commands Test Suite', () => {
             globalStoragePath: __dirname,
             logPath: __dirname,
             secrets: {} as vscode.SecretStorage,
-            extension: {} as vscode.Extension<any>,
+            extension: {} as vscode.Extension<unknown>,
             languageModelAccessInformation: {} as vscode.LanguageModelAccessInformation,
         } as unknown as vscode.ExtensionContext;
 

@@ -12,7 +12,7 @@ export abstract class BaseCommand {
      * Register the command with VS Code
      * @param context The extension context
      */
-    public static register(context: vscode.ExtensionContext): void {
+    public static register(_context: vscode.ExtensionContext): void {
         throw new Error('register() must be implemented by subclass');
     }
 
