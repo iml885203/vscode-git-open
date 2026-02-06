@@ -25,6 +25,10 @@ export class QuickPickCommand {
     private async execute(): Promise<void> {
         try {
             const items: CommandQuickPickItem[] = [
+				{
+					kind: vscode.QuickPickItemKind.Separator,
+					label: 'Repository'
+				},
                 {
                     label: '$(repo) Open Repository',
                     description: 'View repository homepage',
