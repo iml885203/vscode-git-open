@@ -30,7 +30,7 @@ export class OpenMergeRequestsCommand extends BaseCommand {
             await vscode.env.openExternal(vscode.Uri.parse(url));
             vscode.window.showInformationMessage(`Opening merge requests page: ${url}`);
         } catch (error) {
-            this.handleError(error);
+            await this.handleError(error);
         }
     }
 } 

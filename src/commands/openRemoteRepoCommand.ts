@@ -30,7 +30,7 @@ export class OpenRemoteRepoCommand extends BaseCommand {
             await vscode.env.openExternal(vscode.Uri.parse(url));
             vscode.window.showInformationMessage(`Opening remote repository: ${url}`);
         } catch (error) {
-            this.handleError(error);
+            await this.handleError(error);
         }
     }
 } 

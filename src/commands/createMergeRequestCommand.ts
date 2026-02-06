@@ -37,7 +37,7 @@ export class CreateMergeRequestCommand extends BaseCommand {
 
             vscode.window.showInformationMessage(`Creating merge request from ${currentBranch} into ${defaultBranch}`);
         } catch (error) {
-            this.handleError(error);
+            await this.handleError(error);
         }
     }
 } 
