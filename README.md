@@ -83,18 +83,7 @@ This tells the extension to treat your specified domain as a GitLab server, enab
 
 **Problem**: Extension doesn't recognize your self-hosted Git provider (GitLab, GitHub Enterprise, etc.).
 
-**Solution**:
-1. Open VS Code Settings (`Ctrl+,` or `Cmd+,`)
-2. Search for `git-open.providerDomains`
-3. Add your custom domain mapping:
-   ```json
-   {
-     "git-open.providerDomains": {
-       "git.yourcompany.com": "gitlab"
-     }
-   }
-   ```
-4. Supported provider types: `github`, `gitlab`, `bitbucket`, `azure`
+**Solution**: See [Extension Settings](#extension-settings) section below for how to configure custom provider domains.
 
 ### Commands not working in multi-repo workspace
 
