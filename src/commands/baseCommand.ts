@@ -1,6 +1,7 @@
 import * as vscode from 'vscode';
 import { GitError, GitHelper } from '../gitHelper';
 import { UrlBuilder, UnsupportedProviderError } from '../urlBuilder';
+import { RepoSelectionCache } from '../repoSelectionCache';
 
 export interface WorkspaceFolderItem {
     label: string;
@@ -9,6 +10,15 @@ export interface WorkspaceFolderItem {
 }
 
 export abstract class BaseCommand {
+    private static repoCache: RepoSelectionCache | null = null;
+
+    /**
+     * Set the repo selection cache instance
+     */
+    public static setRepoCache(cache: RepoSelectionCache): void {
+        BaseCommand.repoCache = cache;
+    }
+
     /**
      * Register the command with VS Code
      * @param context The extension context
@@ -80,11 +90,44 @@ export abstract class BaseCommand {
             throw new Error('No workspace folder found');
         }
 
-        return BaseCommand.resolveWorkspacePath(
+        // Get workspace identifier for cache
+        const workspaceIdentifier = vscode.workspace.workspaceFile?.fsPath ||
+            (workspaceFolders.length > 0 ? workspaceFolders[0].uri.fsPath : '');
+
+        const selectedPath = await BaseCommand.resolveWorkspacePath(
             workspaceFolders,
             (path) => GitHelper.isGitRepository(path),
-            (items) => Promise.resolve(vscode.window.showQuickPick(items, { placeHolder: 'Select a Git repository' }))
+            async (items) => {
+                // Enhance items with recent selection indicator
+                if (BaseCommand.repoCache && items.length > 1) {
+                    const lastSelected = BaseCommand.repoCache.getLastSelected(workspaceIdentifier);
+                    if (lastSelected) {
+                        const enhancedItems = items.map(item => ({
+                            ...item,
+                            label: item.folder.uri.fsPath === lastSelected
+                                ? `$(history) ${item.label}` // Add history icon
+                                : item.label,
+                            description: item.folder.uri.fsPath === lastSelected
+                                ? `${item.description} • Recently used`
+                                : item.description
+                        }));
+                        return Promise.resolve(vscode.window.showQuickPick(enhancedItems, {
+                            placeHolder: 'Select a Git repository'
+                        }));
+                    }
+                }
+                return Promise.resolve(vscode.window.showQuickPick(items, {
+                    placeHolder: 'Select a Git repository'
+                }));
+            }
         );
+
+        // Record the selection
+        if (BaseCommand.repoCache && workspaceFolders.length > 1) {
+            BaseCommand.repoCache.recordSelection(workspaceIdentifier, selectedPath);
+        }
+
+        return selectedPath;
     }
 
     /**

@@ -1,5 +1,9 @@
 import * as vscode from 'vscode';
 
+interface CommandQuickPickItem extends vscode.QuickPickItem {
+    command?: string;
+}
+
 export class QuickPickCommand {
     public static readonly commandId = 'git-open.showQuickPick';
 
@@ -20,34 +24,48 @@ export class QuickPickCommand {
      */
     private async execute(): Promise<void> {
         try {
-            const items = [
+            const items: CommandQuickPickItem[] = [
                 {
                     label: '$(repo) Open Repository',
-                    description: 'Open the remote repository in browser',
+                    description: 'View repository homepage',
+                    detail: 'Shortcut: Alt+G Alt+O',
                     command: 'git-open.openRemoteRepo'
                 },
                 {
+                    kind: vscode.QuickPickItemKind.Separator,
+                    label: 'Pull Requests & Merge Requests'
+                },
+                {
                     label: '$(git-pull-request) Open Merge Requests',
-                    description: 'Open merge requests/pull requests page',
+                    description: 'Browse all open pull requests/merge requests',
+                    detail: 'Shortcut: Alt+G Alt+M',
                     command: 'git-open.openMergeRequests'
                 },
                 {
                     label: '$(git-merge) Create Merge Request',
-                    description: 'Create a new merge request/pull request',
+                    description: 'Create new pull request from current branch',
+                    detail: 'Shortcut: Alt+G Alt+R',
                     command: 'git-open.createMergeRequest'
                 },
                 {
+                    kind: vscode.QuickPickItemKind.Separator,
+                    label: 'CI/CD'
+                },
+                {
                     label: '$(play) Open Pipelines',
-                    description: 'Open pipelines/actions page',
+                    description: 'View CI/CD pipeline runs and workflows',
+                    detail: 'Shortcut: Alt+G Alt+P',
                     command: 'git-open.openPipelines'
                 }
             ];
 
             const selected = await vscode.window.showQuickPick(items, {
-                placeHolder: 'Select an action to perform'
+                placeHolder: 'Choose a Git action',
+                matchOnDescription: true,
+                matchOnDetail: true
             });
 
-            if (selected) {
+            if (selected?.command) {
                 await vscode.commands.executeCommand(selected.command);
             }
         } catch (error) {
