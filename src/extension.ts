@@ -8,6 +8,7 @@ import { OpenPipelinesCommand } from './commands/openPipelinesCommand';
 import { QuickPickCommand } from './commands/quickPickCommand';
 import { RepoSelectionCache } from './repoSelectionCache';
 import { BaseCommand } from './commands/baseCommand';
+import { GitHelper } from './gitHelper';
 
 // This method is called when your extension is activated
 // Your extension is activated the very first time the command is executed
@@ -35,9 +36,10 @@ export function activate(context: vscode.ExtensionContext) {
 	context.subscriptions.push(
 		vscode.workspace.onDidChangeConfiguration(e => {
 			if (e.affectsConfiguration('git-open.providerDomains')) {
-				// Configuration has changed, but we don't need to do anything
-				// since we always read the latest configuration when needed
-				console.log('Git Open provider domains configuration updated');
+				// Clear Git cache when provider domains change
+				// This ensures provider detection uses the new configuration
+				GitHelper.clearCache();
+				console.log('Git Open: Provider domains updated, cache cleared');
 			}
 		})
 	);
