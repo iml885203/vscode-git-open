@@ -1,5 +1,10 @@
 # Change Log
 
+## [2026.2.1] - 2026-02-09
+
+### Changed
+- Lower VS Code requirement from ^1.109.0 to ^1.96.0 for better compatibility
+
 ## [2026.2.0] - 2026-02-06
 
 ### Added
